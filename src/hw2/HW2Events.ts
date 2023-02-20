@@ -43,6 +43,10 @@ export const HW2Events = {
 
     MINE_EXPLODED: "MINE_EXPLODED",
 
-    PLAYER_HIT: "PLAYER_HIT"
+    PLAYER_HIT: "PLAYER_HIT",
+
+    HEALTH_CHANGE: "HEALTH_CHANGE",
+
+    AIR_CHANGE: "AIR_CHANGE",
     
 } as const;
