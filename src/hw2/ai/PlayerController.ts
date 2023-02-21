@@ -49,6 +49,8 @@ export default class PlayerController implements AI {
 	private invincibleTimer: Timer;
 	private invincible;
 
+	private sentDeadSignal: boolean;
+
 	/**
 	 * This method initializes all variables inside of this AI class.
      * 
@@ -72,10 +74,12 @@ export default class PlayerController implements AI {
 		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
 
 		this.activate(options);
+
+		this.sentDeadSignal = false;
 	}
 	public activate(options: Record<string,any>): void {
 		// Set the player's current health
-        this.currentHealth = 10;
+        this.currentHealth = 1;
 
         // Set upper and lower bounds on the player's health
         this.minHealth = 0;
@@ -127,8 +131,9 @@ export default class PlayerController implements AI {
 		this.emitter.fireEvent(HW2Events.AIR_CHANGE, {curair: this.currentAir, maxair: this.maxAir});
 
         // If the player is out of hp - play the death animation
-		if (this.currentHealth <= this.minHealth) { 
+		if (this.currentHealth <= this.minHealth && !this.sentDeadSignal) { 
             this.emitter.fireEvent(HW2Events.DEAD);
+			this.sentDeadSignal = true;
             return;
         }
 
@@ -237,7 +242,7 @@ export default class PlayerController implements AI {
 	}
 
 	protected handleBubbleCollisionEvent(event: GameEvent): void {
-		this.currentAir += 1;
+		this.currentAir = MathUtils.clamp(this.currentAir + 1, this.minAir, this.maxAir);
 	}
 } 
 
