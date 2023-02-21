@@ -199,8 +199,8 @@ export default class HW2Scene extends Scene {
 		for (let mine of this.mines) if (mine.visible) this.handleScreenDespawn(mine);
 		for (let bubble of this.bubbles) if (bubble.visible) this.handleScreenDespawn(bubble);
 
-		// handle wrap player
 		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
+		this.lockPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
 	}
     /**
      * @see Scene.unloadScene()
@@ -931,10 +931,6 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS													
 	 */
 	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO wrap the player around the top/bottom of the screen
-		// if the player is off the top of the screen, move the player to the bottom of the screen
-		// if the player is off the bottom of the screen, move the player to the top of the screen
-		console.log("WRAPPING PLAYER");
 		if (player.position.y < viewportCenter.y - viewportHalfSize.y) {
 			player.position.y = viewportCenter.y + viewportHalfSize.y;
 		}
@@ -983,7 +979,12 @@ export default class HW2Scene extends Scene {
 	 * 
 	 */
 	protected lockPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO prevent the player from moving off the left/right side of the screen
+		if (player.position.x - player.boundary.getHalfSize().x < viewportCenter.x - viewportHalfSize.x) {
+			player.position.x = viewportCenter.x - viewportHalfSize.x + player.boundary.getHalfSize().x ;
+		}
+		if (player.position.x + player.boundary.getHalfSize().x > viewportCenter.x + viewportHalfSize.x) {
+			player.position.x = viewportCenter.x + viewportHalfSize.x - player.boundary.getHalfSize().x;
+		}
 	}
 
 	public handleTimers(): void {
