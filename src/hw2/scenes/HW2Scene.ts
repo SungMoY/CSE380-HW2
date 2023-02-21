@@ -198,6 +198,9 @@ export default class HW2Scene extends Scene {
 		// Handle screen despawning of mines and bubbles
 		for (let mine of this.mines) if (mine.visible) this.handleScreenDespawn(mine);
 		for (let bubble of this.bubbles) if (bubble.visible) this.handleScreenDespawn(bubble);
+
+		// handle wrap player
+		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
 	}
     /**
      * @see Scene.unloadScene()
@@ -548,7 +551,6 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS
 	 */
 	protected spawnBubble(): void {
-		// TODO spawn bubbles!
 		// Find the first visible bubble
 		let bubble: Graphic = this.bubbles.find((bubble: Graphic) => { return !bubble.visible });
 
@@ -616,7 +618,17 @@ export default class HW2Scene extends Scene {
 	 * It may be helpful to make your own drawings while figuring out the math for this part.
 	 */
 	public handleScreenDespawn(node: CanvasNode): void {
-        // TODO - despawn the game nodes when they move out of the padded viewport
+		// Extract the size of the viewport
+		let paddedViewportSize = this.viewport.getHalfSize().scaled(2).add(this.worldPadding);
+		let viewportSize = this.viewport.getHalfSize().scaled(2);
+
+		// Check if the node is out of bounds
+		if (node.position.x < -paddedViewportSize.x || node.position.x > paddedViewportSize.x || node.position.y < -paddedViewportSize.y || node.position.y > paddedViewportSize.y){
+			// If it is, despawn it
+			node.visible = false;
+			node.setAIActive(false, {});
+		}
+
 	}
 
 	/** Methods for updating the UI */
@@ -920,6 +932,15 @@ export default class HW2Scene extends Scene {
 	 */
 	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
 		// TODO wrap the player around the top/bottom of the screen
+		// if the player is off the top of the screen, move the player to the bottom of the screen
+		// if the player is off the bottom of the screen, move the player to the top of the screen
+		console.log("WRAPPING PLAYER");
+		if (player.position.y < viewportCenter.y - viewportHalfSize.y) {
+			player.position.y = viewportCenter.y + viewportHalfSize.y;
+		}
+		if (player.position.y > viewportCenter.y + viewportHalfSize.y) {
+			player.position.y = viewportCenter.y - viewportHalfSize.y;
+		}
 	}
 
     /**
