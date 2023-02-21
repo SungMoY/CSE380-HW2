@@ -746,8 +746,15 @@ export default class HW2Scene extends Scene {
 	 * an AABB and a Circle
 	 */
 	public handleBubblePlayerCollisions(): number {
-		// TODO check for collisions between the player and the bubbles
-        return;
+		let collisions = 0;
+		for (let bubble of this.bubbles) {
+			if (bubble.visible && HW2Scene.checkAABBtoCircleCollision(this.player.collisionShape.getBoundingRect(), bubble.collisionShape.getBoundingCircle())) {
+				//this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION);
+				bubble.visible = false;
+				collisions++;
+			}
+		}
+		return collisions;
 	}
 
 	/**
@@ -820,8 +827,27 @@ export default class HW2Scene extends Scene {
 	 * @see MathUtils for more information about MathUtil functions
 	 */
 	public static checkAABBtoCircleCollision(aabb: AABB, circle: Circle): boolean {
-        // TODO implement collision detection for AABBs and Circles
-        return;
+		let distanceX = Math.abs(circle.center.x - aabb.center.x);
+		let distanceY = Math.abs(circle.center.y - aabb.center.y);
+
+		if (distanceX > (aabb.halfSize.x + circle.radius)) {
+			return false; 
+		}
+		if (distanceY > (aabb.halfSize.y + circle.radius)) {
+			return false; 
+		}
+
+		if (distanceX <= (aabb.halfSize.x)) { 
+			return true;
+		}
+		if (distanceY <= (aabb.halfSize.y)) {
+			return true;
+		}
+
+		let cornerDistance_sq = Math.pow((distanceX - aabb.halfSize.x), 2) + Math.pow((distanceY - aabb.halfSize.y), 2);
+
+		return (cornerDistance_sq <= Math.pow(circle.radius, 2));
+
 	}
 
     /** Methods for locking and wrapping nodes */
