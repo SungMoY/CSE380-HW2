@@ -69,7 +69,7 @@ export default class PlayerController implements AI {
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
 		this.receiver.subscribe(HW2Events.DEAD);
-		this.receiver.subscribe(HW2Events.PLAYER_HIT);
+		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
 
 		this.activate(options);
 	}
@@ -175,6 +175,10 @@ export default class PlayerController implements AI {
 				this.handleDeathEvent(event);
 				break;
 			}
+			case HW2Events.PLAYER_BUBBLE_COLLISION: {
+				this.handleBubbleCollisionEvent(event);
+				break;
+			}
 			default: {
 				throw new Error(`Unhandled event of type: ${event.type} caught in PlayerController`);
 			}
@@ -230,6 +234,10 @@ export default class PlayerController implements AI {
 
 	protected toggleInvincibility = () => {
 		this.invincible = false;
+	}
+
+	protected handleBubbleCollisionEvent(event: GameEvent): void {
+		this.currentAir += 1;
 	}
 } 
 
