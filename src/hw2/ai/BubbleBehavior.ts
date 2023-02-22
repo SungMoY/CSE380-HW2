@@ -32,6 +32,8 @@ export default class BubbleBehavior implements AI {
 
     private receiver: Receiver;
 
+    private playerDead: boolean;
+
     public initializeAI(owner: Graphic, options: Record<string, any>): void {
         this.owner = owner;
 
@@ -45,8 +47,12 @@ export default class BubbleBehavior implements AI {
         this.minYSpeed = 50;
         this.maxYSpeed = 50;
 
+        this.playerDead = false;
+
         this.receiver = new Receiver();
         this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
+
+        this.receiver.subscribe(HW2Events.DEAD);
 
         this.activate(options);
     }
@@ -58,9 +64,13 @@ export default class BubbleBehavior implements AI {
     public activate(options: Record<string, any>): void {}
 
     public handleEvent(event: GameEvent): void {
+        console.log("Handling event in BubbleBehavior! Event type: " + event.type);
         switch(event.type) {
             case HW2Events.PLAYER_BUBBLE_COLLISION: {
                 this.handlePlayerBubbleCollision(event);
+            }
+            case HW2Events.DEAD: {
+                this.playerDead = true;
                 break;
             }
             default: {
@@ -86,7 +96,7 @@ export default class BubbleBehavior implements AI {
 
     protected handlePlayerBubbleCollision(event: GameEvent): void {
         let id = event.data.get("id");
-        if (id === this.owner.id) {
+        if (id === this.owner.id && !this.playerDead) {
             this.owner.visible = false;
         }
     }

@@ -22,6 +22,8 @@ export default class MineBehavior implements AI {
     private direction: Vec2;
     private receiver: Receiver;
 
+    private playerDead: boolean;
+
     /**
      * @see {AI.initializeAI}
      */
@@ -29,10 +31,13 @@ export default class MineBehavior implements AI {
         this.owner = owner;
         this.direction = Vec2.LEFT;
 
+        this.playerDead = false;
+
         this.receiver = new Receiver();
         this.receiver.subscribe(HW2Events.LASER_MINE_COLLISION);
         this.receiver.subscribe(HW2Events.MINE_EXPLODED);
         this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
+        this.receiver.subscribe(HW2Events.DEAD);
 
         this.activate(options);
     }
@@ -58,7 +63,13 @@ export default class MineBehavior implements AI {
                 break;
             }
             case HW2Events.PLAYER_MINE_COLLISION: {
-                this.handlePlayerMineCollision(event);
+                if (!this.playerDead) {
+                    this.handlePlayerMineCollision(event);
+                }
+                break;
+            }
+            case HW2Events.DEAD: {
+                this.playerDead = true;
                 break;
             }
             default: {

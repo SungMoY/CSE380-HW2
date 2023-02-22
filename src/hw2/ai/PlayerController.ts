@@ -142,15 +142,19 @@ export default class PlayerController implements AI {
 		let horizontalAxis = (Input.isPressed(HW2Controls.MOVE_LEFT) ? -1 : 0) + (Input.isPressed(HW2Controls.MOVE_RIGHT) ? 1 : 0);
 
 		// Handle trying to shoot a laser from the submarine
-		if (Input.isMouseJustPressed() && this.currentCharge > 0) {
-			this.currentCharge -= 1;
-			this.emitter.fireEvent(HW2Events.SHOOT_LASER, {src: this.owner.position});
-			this.emitter.fireEvent(HW2Events.CHARGE_CHANGE, {curchrg: this.currentCharge, maxchrg: this.maxCharge});
+		if (!this.sentDeadSignal) {
+			if (Input.isMouseJustPressed() && this.currentCharge > 0) {
+				this.currentCharge -= 1;
+				this.emitter.fireEvent(HW2Events.SHOOT_LASER, {src: this.owner.position});
+				this.emitter.fireEvent(HW2Events.CHARGE_CHANGE, {curchrg: this.currentCharge, maxchrg: this.maxCharge});
+			}
 		}
 
 		// Move the player
-		let movement = Vec2.UP.scaled(forwardAxis * this.currentSpeed).add(new Vec2(horizontalAxis * this.currentSpeed, 0));
-		this.owner.position.add(movement.scaled(deltaT));
+		if (!this.sentDeadSignal) {
+			let movement = Vec2.UP.scaled(forwardAxis * this.currentSpeed).add(new Vec2(horizontalAxis * this.currentSpeed, 0));
+			this.owner.position.add(movement.scaled(deltaT));
+		}
 
 		// Player looses a little bit of air each frame
 		this.currentAir = MathUtils.clamp(this.currentAir - deltaT, this.minAir, this.maxAir);
@@ -181,7 +185,9 @@ export default class PlayerController implements AI {
 				break;
 			}
 			case HW2Events.PLAYER_BUBBLE_COLLISION: {
-				this.handleBubbleCollisionEvent(event);
+				if (!this.sentDeadSignal) {
+					this.handleBubbleCollisionEvent(event);
+				}
 				break;
 			}
 			default: {
@@ -222,7 +228,7 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerHitEvent(event: GameEvent): void {
-		if (this.invincible) {
+		if (this.invincible || this.sentDeadSignal) {
 			return;
 		}
 		this.owner.animation.play(PlayerAnimations.HIT);
