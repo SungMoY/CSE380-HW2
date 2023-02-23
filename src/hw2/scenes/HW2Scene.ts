@@ -119,7 +119,7 @@ export default class HW2Scene extends Scene {
 
 		// handle recording as detailed in the README
 		if (this.recording) {
-			let recordingObject = new BasicRecording(HW2Scene, this.initScene.bind(options));
+			let recordingObject = new BasicRecording(HW2Scene, {seed: this.seed});
 			this.emitter.fireEvent(GameEventType.START_RECORDING, {recording: recordingObject});
 		}	
 	}
@@ -198,8 +198,6 @@ export default class HW2Scene extends Scene {
 
 		// Handle timers
 		this.handleTimers();
-
-        // TODO Remove despawning of mines and bubbles here
 
 		// Handle screen despawning of mines and bubbles
 		for (let mine of this.mines) if (mine.visible) this.handleScreenDespawn(mine);

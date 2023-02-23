@@ -159,11 +159,16 @@ export default class MainMenu extends Scene {
             }
             case MainMenuEvent.PLAY_RECORDING: {
                 // TODO play the recording here
+                this.emitter.fireEvent(GameEventType.PLAY_RECORDING, this.afterRecording)
                 break;
             }
             default: {
                 throw new Error(`Unhandled event caught in MainMenu: "${event.type}"`);
             }
         }
+    }
+
+    afterRecording = () => {
+        this.sceneManager.changeToScene(MainMenu);
     }
 }
