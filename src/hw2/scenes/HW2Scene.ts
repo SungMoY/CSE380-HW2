@@ -108,6 +108,8 @@ export default class HW2Scene extends Scene {
 	// The padding of the world
 	private worldPadding: Vec2;
 
+	private recordingObject: BasicRecording;
+
 	/** Scene lifecycle methods */
 
 	/**
@@ -119,8 +121,8 @@ export default class HW2Scene extends Scene {
 
 		// handle recording as detailed in the README
 		if (this.recording) {
-			let recordingObject = new BasicRecording(HW2Scene, {seed: this.seed});
-			this.emitter.fireEvent(GameEventType.START_RECORDING, {recording: recordingObject});
+			this.recordingObject = new BasicRecording(HW2Scene, {seed: this.seed});
+			this.emitter.fireEvent(GameEventType.START_RECORDING, {recording: this.recordingObject});
 		}	
 	}
 	/**
@@ -178,6 +180,8 @@ export default class HW2Scene extends Scene {
 
 		this.receiver.subscribe(HW2Events.HEALTH_CHANGE);
 		this.receiver.subscribe(HW2Events.AIR_CHANGE);
+
+		this.receiver.subscribe(GameEventType.PLAY_RECORDING);
 	}
 	/**
 	 * @see Scene.updateScene 
@@ -233,6 +237,7 @@ export default class HW2Scene extends Scene {
 				break;
 			}
 			case HW2Events.DEAD: {
+				this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 				this.gameOverTimer.start();
 				break;
 			}
@@ -250,6 +255,10 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.AIR_CHANGE: {
 				this.handleAirChange(event.data.get("curair"), event.data.get("maxair"));
+				break;
+			}
+			case GameEventType.PLAY_RECORDING: {
+				this.initScene({seed: this.recordingObject.scene, recording: false})
 				break;
 			}
 			default: {

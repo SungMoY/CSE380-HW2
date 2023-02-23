@@ -159,7 +159,13 @@ export default class MainMenu extends Scene {
             }
             case MainMenuEvent.PLAY_RECORDING: {
                 // TODO play the recording here
-                this.emitter.fireEvent(GameEventType.PLAY_RECORDING, this.afterRecording)
+                //need to set the seed. seed is in basicRecordingObject, need to use RandUtils?
+                /**
+                 * yes
+                    but the rand itself is not reset
+                    so you need to make sure that happens
+                 */
+                this.emitter.fireEvent(GameEventType.PLAY_RECORDING, {onEnd: () => this.sceneManager.changeToScene(MainMenu)});
                 break;
             }
             default: {
@@ -168,7 +174,4 @@ export default class MainMenu extends Scene {
         }
     }
 
-    afterRecording = () => {
-        this.sceneManager.changeToScene(MainMenu);
-    }
 }
