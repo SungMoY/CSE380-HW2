@@ -42,14 +42,11 @@ float sinwave_laser(vec4 position);
  */
 float linear_laser(vec4 position);
 
-// TODO Need to somehow pass in the color from the laser shader type
 void main(){
     gl_FragColor = laser_Color;
 	gl_FragColor.a = sinwave_laser(v_Position);
 }
 
-
-// TODO Get the laser to look like a sinwave
 float sinwave_laser(vec4 position) {
     float dist = abs(position.y - (sin(position.x * 100.0) * 0.01)); // calculate distance from sine wave
     float alpha = 1.0 - smoothstep(MIN_DISTANCE, MAX_DISTANCE, dist); // calculate alpha based on distance from wave
