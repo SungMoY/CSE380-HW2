@@ -119,9 +119,17 @@ export default class HW2Scene extends Scene {
 		this.seed = options.seed === undefined ? RandUtils.randomSeed() : options.seed;
         this.recording = options.recording === undefined ? false : options.recording; 
 
-		// handle recording as detailed in the README
+		RandUtils.seed = this.seed;
+
+		/**
+		 * HW2 relies on generating random numbers to spawn the mines and the bubbles. 
+		 * You will need to find a way to save and set the random seed in order for your 
+		 * recording to replay correctly.
+		 */
 		if (this.recording) {
-			this.recordingObject = new BasicRecording(HW2Scene, {seed: this.seed});
+			let sceneParam = HW2Scene;
+			let initParam = { seed: RandUtils.seed , recording: false };
+			this.recordingObject = new BasicRecording(sceneParam, initParam);
 			this.emitter.fireEvent(GameEventType.START_RECORDING, {recording: this.recordingObject});
 		}	
 	}
