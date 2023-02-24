@@ -79,7 +79,7 @@ export default class PlayerController implements AI {
 	}
 	public activate(options: Record<string,any>): void {
 		// Set the player's current health
-        this.currentHealth = 1;
+        this.currentHealth = 10;
 
         // Set upper and lower bounds on the player's health
         this.minHealth = 0;
@@ -233,6 +233,7 @@ export default class PlayerController implements AI {
 		}
 		this.owner.animation.play(PlayerAnimations.HIT);
 		this.owner.animation.queue(PlayerAnimations.IDLE);
+
 		this.currentHealth -= 1;
 		// start a timer for 2 seconds where the player is invincible
 		this.invincible = true;

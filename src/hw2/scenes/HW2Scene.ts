@@ -375,7 +375,7 @@ export default class HW2Scene extends Scene {
 		this.bubbleSpawnTimer = new Timer(2500);
 		this.bubbleSpawnTimer.start();
 
-		this.gameOverTimer = new Timer(3000);
+		this.gameOverTimer = new Timer(1500);
 	}
 	/**
 	 * Initializes the background image sprites for the game.
